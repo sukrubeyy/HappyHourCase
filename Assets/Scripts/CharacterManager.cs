@@ -7,14 +7,17 @@ using UnityEngine;
 public class CharacterManager : MonoBehaviour
 {
     public SupportType supportType;
+    public Support[] Supports;
+    public Vector3[] SpawnPoints;
 
-    public enum SupportType
+    private void Start()
     {
-        None,
-        SupportOne,
-        SupportTwo,
-        SupportThree
+        for (int i = 0; i < Supports.Length; i++)
+        {
+            Instantiate(Supports[i].supportPrefab, SpawnPoints[i], Quaternion.identity);
+        }
     }
+
 
     private void OnGUI()
     {
@@ -33,18 +36,17 @@ public class CharacterManager : MonoBehaviour
 
         float firstButtonLeft = (Screen.width - 3 * (buttonWidth + spacing)) / 2;
 
-        for (int i = 0; i < 3; i++)
+        for (int i = 0; i < Supports.Length; i++)
         {
             float buttonLeft = firstButtonLeft + i * (buttonWidth + spacing);
             float buttonTop = Screen.height - buttonHeight - bottomMargin;
             var buttonStyle = (SupportType) i + 1 == supportType ? GetCustomButtonPressedStyle : GetCustomButtonStyle;
-            if (GUI.Button(new Rect(buttonLeft, buttonTop, buttonWidth, buttonHeight), "Support " + (i + 1), buttonStyle))
+            if (GUI.Button(new Rect(buttonLeft, buttonTop, buttonWidth, buttonHeight), $"{Supports[i].supportType}", buttonStyle))
             {
                 if (supportType == (SupportType) i + 1)
                     supportType = SupportType.None;
                 else
                     supportType = (SupportType) i + 1;
-                Debug.Log("Buton " + (i + 1) + " tıklandı!");
             }
         }
     }
@@ -66,9 +68,10 @@ public class CharacterManager : MonoBehaviour
         {
             background = Texture2D.grayTexture,
             textColor = Color.white
-        }
+        },
+        fontSize = 10,
+        fontStyle = FontStyle.Bold
     };
-
     private GUIStyle GetCustomButtonPressedStyle => new GUIStyle(GUI.skin.button)
     {
         alignment = TextAnchor.MiddleCenter,
@@ -86,6 +89,9 @@ public class CharacterManager : MonoBehaviour
         {
             background = Texture2D.whiteTexture,
             textColor = Color.black
-        }
+        },
+        fontSize = 10,
+        fontStyle = FontStyle.Bold
     };
 }
+
