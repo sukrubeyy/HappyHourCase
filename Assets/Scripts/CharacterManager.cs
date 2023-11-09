@@ -1,23 +1,52 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEditor;
 using UnityEngine;
+using UnityEngine.EventSystems;
+using UnityEngine.Serialization;
 
 public class CharacterManager : MonoBehaviour
 {
     public SupportType supportType;
     public Support[] Supports;
     public Vector3[] SpawnPoints;
+    public SupportController[] supportsController;
 
     private void Start()
     {
+        CreateSupportObjects();
+    }
+
+    private void CreateSupportObjects()
+    {
+        supportsController = new SupportController[Supports.Length];
         for (int i = 0; i < Supports.Length; i++)
         {
-            Instantiate(Supports[i].supportPrefab, SpawnPoints[i], Quaternion.identity);
+            supportsController[i] = Instantiate(Supports[i].supportPrefab, SpawnPoints[i], Quaternion.identity).GetComponent<SupportController>();
         }
     }
 
+    private void Update()
+    {
+        if (Input.GetMouseButtonDown(0))
+        {
+            RaycastHit hit;
+            Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
+            if (Physics.Raycast(ray, out hit, Mathf.Infinity))
+            {
+                if (supportType is not SupportType.None)
+                {
+                    supportsController.FirstOrDefault(x => x.type == supportType)._unit.SetDestination(hit.point);
+                }
+                else
+                {
+                    Debug.LogWarning("Lütfen Support Seç");
+                }
+            }
+        }
+    }
 
     private void OnGUI()
     {
@@ -29,18 +58,16 @@ public class CharacterManager : MonoBehaviour
 
         GUI.Box(new Rect(leftMargin, topMargin - boxHeightPadding, boxWidth, boxHeight), "Wood");
 
-        float bottomMargin = 20f;
         float spacing = 10f;
         float buttonWidth = 80f;
         float buttonHeight = 30f;
 
-        float firstButtonLeft = (Screen.width - 3 * (buttonWidth + spacing)) / 2;
-
-        for (int i = 0; i < Supports.Length; i++)
+        for (int i = 0; i < 3; i++)
         {
-            float buttonLeft = firstButtonLeft + i * (buttonWidth + spacing);
-            float buttonTop = Screen.height - buttonHeight - bottomMargin;
-            var buttonStyle = (SupportType) i + 1 == supportType ? GetCustomButtonPressedStyle : GetCustomButtonStyle;
+            float buttonLeft = leftMargin;
+            float buttonTop = topMargin + boxHeightPadding + i * (buttonHeight + spacing); 
+            var buttonStyle = (SupportType)i + 1 == supportType ? GetCustomButtonPressedStyle : GetCustomButtonStyle;
+
             if (GUI.Button(new Rect(buttonLeft, buttonTop, buttonWidth, buttonHeight), $"{Supports[i].supportType}", buttonStyle))
             {
                 if (supportType == (SupportType) i + 1)
@@ -72,6 +99,7 @@ public class CharacterManager : MonoBehaviour
         fontSize = 10,
         fontStyle = FontStyle.Bold
     };
+
     private GUIStyle GetCustomButtonPressedStyle => new GUIStyle(GUI.skin.button)
     {
         alignment = TextAnchor.MiddleCenter,
@@ -94,4 +122,3 @@ public class CharacterManager : MonoBehaviour
         fontStyle = FontStyle.Bold
     };
 }
-

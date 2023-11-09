@@ -12,6 +12,8 @@ GameObject:
   - component: {fileID: 1146625719301938377}
   - component: {fileID: 1411484411745156638}
   - component: {fileID: 6496801565088890562}
+  - component: {fileID: -7924482619382593937}
+  - component: {fileID: 2643586220253154920}
   m_Layer: 0
   m_Name: Support3
   m_TagString: Untagged
@@ -107,3 +109,34 @@ CapsuleCollider:
   m_Height: 2
   m_Direction: 1
   m_Center: {x: 0, y: 0, z: 0}
+--- !u!114 &-7924482619382593937
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3263107360909758825}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f405937fb69e244198911aebaac9bf00, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  target: {x: 0, y: 0, z: 0}
+  speed: 20
+  turnSpeed: 3
+  turnDst: 5
+  stoppingDst: 10
+--- !u!114 &2643586220253154920
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3263107360909758825}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c22e0e3ba4358164fa62f7697d886570, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _unit: {fileID: -7924482619382593937}
+  type: 3

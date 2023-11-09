@@ -14,3 +14,4 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   supportType: 1
   supportPrefab: {fileID: 3010807089886070733, guid: 66c51f8b6dcdc4748b4d28872efee45c, type: 3}
+  unit: {fileID: 2783026601455448153, guid: 66c51f8b6dcdc4748b4d28872efee45c, type: 3}

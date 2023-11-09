@@ -7,4 +7,5 @@ public class Support : ScriptableObject
 {
     public SupportType supportType;
     public GameObject supportPrefab;
+    public Unit unit;
 }
