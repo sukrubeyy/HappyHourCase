@@ -122,10 +122,11 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   target: {x: 0, y: 0, z: 0}
-  speed: 20
+  speed: 40
   turnSpeed: 3
   turnDst: 5
-  stoppingDst: 10
+  stoppingDst: -5
+  reachedEndOfPath: 0
 --- !u!114 &2643586220253154920
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -140,5 +141,5 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _unit: {fileID: -7924482619382593937}
   type: 3
-  radius: 1.5
+  radius: 2
   gizmosColor: {r: 0, g: 0.4434495, b: 1, a: 1}

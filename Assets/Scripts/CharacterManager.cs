@@ -38,12 +38,18 @@ public class CharacterManager : MonoBehaviour
             Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
             if (Physics.Raycast(ray, out hit, Mathf.Infinity))
             {
-                //TODO: eğer tıkladığım obje tahta ise karakter tahtaya doğru gitsin ve alsın - eğer değilse sadece hareket etsin
-                //var woodObject = hit.collider.GetComponent<IPickable>();
                 if (supportType is not SupportType.None)
                 {
-                    supportsController.FirstOrDefault(x => x.type == supportType).SetTarget(hit.point);
-                    //supportsController.FirstOrDefault(x => x.type == supportType)._unit.SetDestination(hit.point);
+                    var pickableObject = hit.transform.GetComponent<IPickable>();
+                    if (pickableObject is not null)
+                    {
+                        var wood = hit.transform.GetComponent<Wood>();
+                        supportsController.FirstOrDefault(x => x.type == supportType).SetTarget(wood.transform.position,wood);
+                    }
+                    else
+                    {
+                        supportsController.FirstOrDefault(x => x.type == supportType).SetTarget(hit.point);
+                    }
                 }
                 else
                 {
