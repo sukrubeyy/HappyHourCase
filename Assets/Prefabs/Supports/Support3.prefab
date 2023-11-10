@@ -140,3 +140,5 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _unit: {fileID: -7924482619382593937}
   type: 3
+  radius: 1.5
+  gizmosColor: {r: 0, g: 0.4434495, b: 1, a: 1}

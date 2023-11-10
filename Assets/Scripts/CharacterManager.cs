@@ -13,7 +13,7 @@ public class CharacterManager : MonoBehaviour
     public Support[] Supports;
     public Vector3[] SpawnPoints;
     public SupportController[] supportsController;
-
+    private int woodCount;
     private void Start()
     {
         CreateSupportObjects();
@@ -25,9 +25,11 @@ public class CharacterManager : MonoBehaviour
         for (int i = 0; i < Supports.Length; i++)
         {
             supportsController[i] = Instantiate(Supports[i].supportPrefab, SpawnPoints[i], Quaternion.identity).GetComponent<SupportController>();
+            supportsController[i].SetController(this);
         }
     }
 
+    public void IncreaseWoodCount() => woodCount++;
     private void Update()
     {
         if (Input.GetMouseButtonDown(0))
@@ -36,9 +38,12 @@ public class CharacterManager : MonoBehaviour
             Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
             if (Physics.Raycast(ray, out hit, Mathf.Infinity))
             {
+                //TODO: eğer tıkladığım obje tahta ise karakter tahtaya doğru gitsin ve alsın - eğer değilse sadece hareket etsin
+                //var woodObject = hit.collider.GetComponent<IPickable>();
                 if (supportType is not SupportType.None)
                 {
-                    supportsController.FirstOrDefault(x => x.type == supportType)._unit.SetDestination(hit.point);
+                    supportsController.FirstOrDefault(x => x.type == supportType).SetTarget(hit.point);
+                    //supportsController.FirstOrDefault(x => x.type == supportType)._unit.SetDestination(hit.point);
                 }
                 else
                 {
@@ -56,7 +61,7 @@ public class CharacterManager : MonoBehaviour
         float leftMargin = 20f;
         float topMargin = (Screen.height - boxHeight) / 2;
 
-        GUI.Box(new Rect(leftMargin, topMargin - boxHeightPadding, boxWidth, boxHeight), "Wood");
+        GUI.Box(new Rect(leftMargin, topMargin - boxHeightPadding, boxWidth, boxHeight), $"Wood {woodCount}");
 
         float spacing = 10f;
         float buttonWidth = 80f;

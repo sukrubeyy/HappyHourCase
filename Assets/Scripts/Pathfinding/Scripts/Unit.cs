@@ -14,6 +14,7 @@ public class Unit : MonoBehaviour {
 	public float stoppingDst = 10;
 
 	Path path;
+	public bool reachedEndOfPath;
 
 	public void SetDestination(Vector3 targetPos)
 	{
@@ -75,6 +76,7 @@ public class Unit : MonoBehaviour {
 					speedPercent = Mathf.Clamp01 (path.turnBoundaries [path.finishLineIndex].DistanceFromPoint (pos2D) / stoppingDst);
 					if (speedPercent < 0.01f) {
 						followingPath = false;
+						reachedEndOfPath = true;
 					}
 				}
 
