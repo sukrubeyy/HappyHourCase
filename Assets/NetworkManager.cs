@@ -65,12 +65,13 @@ public class NetworkManager : SingletonForPun<NetworkManager>
     public override void OnJoinedRoom()
     {
         MenuManager.Instance.RefreshPlayerList();
-        //TODO: MenuManager'da PlayerListele
+        MenuManager.Instance.ChangeVisibilityStartButton(PhotonNetwork.IsMasterClient);
     }
 
     public override void OnMasterClientSwitched(Player newMasterClient)
     {
         Debug.Log($"OnMasterClientSwitched {newMasterClient.NickName}");
+        MenuManager.Instance.ChangeVisibilityStartButton(PhotonNetwork.IsMasterClient);
     }
 
     public void LeaveRoom()

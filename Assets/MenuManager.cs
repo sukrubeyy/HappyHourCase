@@ -83,7 +83,6 @@ public class MenuManager : Singleton<MenuManager>
 
         menuPanel.GetChild(index).gameObject.SetActive(true);
     }
-
     public void RefresRoomList()
     {
         DeleteAllRoomButton();
@@ -96,7 +95,6 @@ public class MenuManager : Singleton<MenuManager>
             Instantiate(roomListItemPrefab, roomListContent).GetComponent<RoomListItem>().Initialize(room);
         }
     }
-
     private void DeleteAllRoomButton()
     {
         for (int i = 0; i < roomListContent.childCount; i++)
