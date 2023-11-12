@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using Photon.Pun;
 using UnityEditor;
 using UnityEngine;
 using UnityEngine.EventSystems;
@@ -14,24 +15,44 @@ public class CharacterManager : MonoBehaviour
     public Vector3[] SpawnPoints;
     public SupportController[] supportsController;
     private int woodCount;
+    private PhotonView PV;
+    private Wood selectedWood;
     private void Start()
     {
-        CreateSupportObjects();
+        PV = GetComponent<PhotonView>();
+        if (PV.IsMine)
+        {
+            SetPosition();
+            CreateSupportObjects();
+        }
+    }
+
+    private void SetPosition()
+    {
+        transform.position = SpawnManager.Instance.GetSpawnPoint().position;
+        transform.rotation = SpawnManager.Instance.GetSpawnPoint().rotation;
     }
 
     private void CreateSupportObjects()
     {
         supportsController = new SupportController[Supports.Length];
+        float padding = 5f;
         for (int i = 0; i < Supports.Length; i++)
         {
-            supportsController[i] = Instantiate(Supports[i].supportPrefab, SpawnPoints[i], Quaternion.identity).GetComponent<SupportController>();
+            var spawnPos = transform.position + (transform.right * (i - 1) * padding) ;
+            supportsController[i] = PhotonNetwork.Instantiate(System.IO.Path.Combine("PhotonPrefabs", Supports[i].name), spawnPos,  Quaternion.identity, 0,new object[] { PV.ViewID}).GetComponent<SupportController>();
             supportsController[i].SetController(this);
         }
     }
 
-    public void IncreaseWoodCount() => woodCount++;
+    public void IncreaseWoodCount()
+    {
+        woodCount++;  
+    }
+   
     private void Update()
     {
+        if(!PV.IsMine)return;
         if (Input.GetMouseButtonDown(0))
         {
             RaycastHit hit;
@@ -43,8 +64,8 @@ public class CharacterManager : MonoBehaviour
                     var pickableObject = hit.transform.GetComponent<IPickable>();
                     if (pickableObject is not null)
                     {
-                        var wood = hit.transform.GetComponent<Wood>();
-                        supportsController.FirstOrDefault(x => x.type == supportType).SetTarget(wood.transform.position,wood);
+                        selectedWood = hit.transform.GetComponent<Wood>();
+                        supportsController.FirstOrDefault(x => x.type == supportType).SetTarget(selectedWood.transform.position,selectedWood);
                     }
                     else
                     {
@@ -61,6 +82,8 @@ public class CharacterManager : MonoBehaviour
 
     private void OnGUI()
     {
+        if(!PV.IsMine)return;
+
         float boxWidth = 100f;
         float boxHeight = 50f;
         float boxHeightPadding = 100f;
@@ -77,8 +100,7 @@ public class CharacterManager : MonoBehaviour
         {
             float buttonLeft = leftMargin;
             float buttonTop = topMargin + boxHeightPadding + i * (buttonHeight + spacing); 
-            var buttonStyle = (SupportType)i + 1 == supportType ? GetCustomButtonPressedStyle : GetCustomButtonStyle;
-
+            var buttonStyle = (SupportType)i + 1 == supportType ? GetCustomButtonPressedStyle(i) : GetCustomButtonStyle(i);
             if (GUI.Button(new Rect(buttonLeft, buttonTop, buttonWidth, buttonHeight), $"{Supports[i].supportType}", buttonStyle))
             {
                 if (supportType == (SupportType) i + 1)
@@ -89,12 +111,12 @@ public class CharacterManager : MonoBehaviour
         }
     }
 
-    private GUIStyle GetCustomButtonStyle => new GUIStyle(GUI.skin.button)
+    private GUIStyle GetCustomButtonStyle(int index) => new GUIStyle(GUI.skin.button)
     {
         alignment = TextAnchor.MiddleCenter,
         normal = new GUIStyleState
         {
-            background = Texture2D.whiteTexture,
+            background = ColorToTexture(supportsController[index].GetColor),
             textColor = Color.black
         },
         active = new GUIStyleState
@@ -111,12 +133,12 @@ public class CharacterManager : MonoBehaviour
         fontStyle = FontStyle.Bold
     };
 
-    private GUIStyle GetCustomButtonPressedStyle => new GUIStyle(GUI.skin.button)
+    private GUIStyle GetCustomButtonPressedStyle(int index) => new GUIStyle(GUI.skin.button)
     {
         alignment = TextAnchor.MiddleCenter,
         normal = new GUIStyleState
         {
-            background = Texture2D.grayTexture,
+            background = ColorToTexture(supportsController[index].GetColor),
             textColor = Color.white
         },
         active = new GUIStyleState
@@ -132,4 +154,12 @@ public class CharacterManager : MonoBehaviour
         fontSize = 10,
         fontStyle = FontStyle.Bold
     };
+    
+    private Texture2D ColorToTexture(Color color)
+    {
+        Texture2D texture = new Texture2D(1, 1);
+        texture.SetPixel(0, 0, color);
+        texture.Apply();
+        return texture;
+    }
 }

@@ -12,21 +12,26 @@ public class RoomListItem : MonoBehaviour
     [SerializeField] private TMP_Text roomText;
     [SerializeField] private Button joinRoomButton;
     private RoomInfo roomInfo;
+
     private void Start()
     {
         joinRoomButton.onClick.AddListener(() =>
         {
-            NetworkManager.Instance.JoinRoom(roomText.text);
-            MenuManager.Instance.OpenMenu(4);
+             if (roomInfo.PlayerCount != roomInfo.MaxPlayers)
+             {
+                 NetworkManager.Instance.JoinRoom(roomText.text);
+                 MenuManager.Instance.OpenMenu(4);
+             }
+             else
+             {
+                 Debug.LogError("MAX PLAYER SİZE - YOU CAN NOT JOIN THIS ROOM");
+             }
         });
-        
-        if(roomInfo.RemovedFromList)
-            Destroy(gameObject);
     }
 
     public void Initialize(RoomInfo _roomInfo)
     {
         roomInfo = _roomInfo;
-        roomText.text = roomInfo.Name;
+        roomText.text = $"{roomInfo.Name} - {roomInfo.PlayerCount} / {roomInfo.MaxPlayers}";
     }
 }

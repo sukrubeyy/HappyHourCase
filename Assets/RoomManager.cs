@@ -42,8 +42,8 @@ public class RoomManager : MonoBehaviourPunCallbacks
     {
         if (sceen.buildIndex == 1)
         {
-            Debug.Log("PlayerManager Creat");
-            PhotonNetwork.Instantiate(System.IO.Path.Combine("PhotonPrefabs", "PlayerManager"), Vector3.zero, Quaternion.identity);
+            Debug.Log("CharacterManager Creat");
+            PhotonNetwork.Instantiate(System.IO.Path.Combine("PhotonPrefabs", "CharacterManager"), Vector3.zero, Quaternion.identity);
         }
     }
 }

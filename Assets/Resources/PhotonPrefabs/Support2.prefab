@@ -145,6 +145,7 @@ MonoBehaviour:
   type: 2
   radius: 1.5
   gizmosColor: {r: 0, g: 0.4434495, b: 1, a: 1}
+  PV: {fileID: 2479906608300969288}
 --- !u!114 &-2721613453636433419
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -179,7 +180,8 @@ MonoBehaviour:
   Synchronization: 3
   OwnershipTransfer: 0
   observableSearch: 2
-  ObservedComponents: []
+  ObservedComponents:
+  - {fileID: -2721613453636433419}
   sceneViewId: 0
   InstantiationId: 0
   isRuntimeInstantiated: 0

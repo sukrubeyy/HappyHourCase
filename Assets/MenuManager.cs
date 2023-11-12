@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using Photon.Pun;
+using Photon.Realtime;
 using TMPro;
 using UnityEngine;
 using UnityEngine.Serialization;
@@ -10,8 +11,10 @@ using Button = UnityEngine.UI.Button;
 
 public class MenuManager : Singleton<MenuManager>
 {
-    [Header("Input Fields")] public TMP_InputField nickNameInput;
+    [Header("Input Fields")] 
+    public TMP_InputField nickNameInput;
     public TMP_InputField roomNameInput;
+    public TMP_InputField maxPlayerInput;
 
     [Header("Buttons")] public Button loginLobbyButton;
     public Button createRoomMenuButton;
@@ -51,14 +54,19 @@ public class MenuManager : Singleton<MenuManager>
         {
             if (!string.IsNullOrEmpty(roomNameInput.text))
             {
-                NetworkManager.Instance.CreateRoom(roomNameInput.text);
+                RoomOptions roomOptions = new RoomOptions();
+                if (!string.IsNullOrEmpty(maxPlayerInput.text) && int.TryParse(maxPlayerInput.text, out int maxPlayer))
+                    roomOptions.MaxPlayers = maxPlayer;
+
+                NetworkManager.Instance.CreateRoom(roomNameInput.text,roomOptions);
                 OpenMenu(4);
             }
         });
 
         startButton.onClick.AddListener(() =>
         {
-            //TODO: START GAME
+            NetworkManager.Instance.LoadScene();
+            NetworkManager.Instance.ChangeVisibilityRoom(false);
         });
 
         createRoomMenuButton.onClick.AddListener(() => { OpenMenu(2); });

@@ -31,12 +31,12 @@ public class NetworkManager : SingletonForPun<NetworkManager>
     public void JoinRoom(string roomName)=>        PhotonNetwork.JoinRoom(roomName);
     public override void OnJoinedLobby()
     {
-        Debug.Log("Joined Lobby");
+        Debug.LogError("Joined Lobby");
     }
 
-    public void CreateRoom(string roomName)
+    public void CreateRoom(string roomName,RoomOptions options)
     {
-        PhotonNetwork.CreateRoom(roomName);
+        PhotonNetwork.CreateRoom(roomName,options);
     }
 
     public override void OnRoomListUpdate(List<RoomInfo> newRoomList)
@@ -77,5 +77,13 @@ public class NetworkManager : SingletonForPun<NetworkManager>
     public void LeaveRoom()
     {
         PhotonNetwork.LeaveRoom();
-    } 
+        JoinLobby(PhotonNetwork.NickName);
+    }
+
+    public void ChangeVisibilityRoom(bool _isVisible) => PhotonNetwork.CurrentRoom.IsVisible = _isVisible;
+    
+    public void LoadScene()
+    {
+        SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex+1);
+    }
 }
