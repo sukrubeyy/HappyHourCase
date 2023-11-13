@@ -1,6 +1,3 @@
-using System;
-using System.Collections;
-using System.Collections.Generic;
 using Photon.Pun;
 using UnityEngine;
 using Random = UnityEngine.Random;
@@ -11,7 +8,8 @@ public class SpawnManager : Singleton<SpawnManager>
     [SerializeField] private Transform[] woodPoints;
     private void Start()
     {
-        CreateWoods();
+        if(PhotonNetwork.IsMasterClient)
+            CreateWoods();
     }
 
     private void CreateWoods()

@@ -1,4 +1,3 @@
-using System.Collections;
 using System.Collections.Generic;
 using Photon.Pun;
 using Photon.Realtime;
@@ -15,30 +14,20 @@ public class NetworkManager : SingletonForPun<NetworkManager>
         PhotonNetwork.ConnectUsingSettings();
         Instantiate(RoomManager);
     }
-    
+
+    #region PhotonMethods
+
     public override void OnConnectedToMaster()
     {
         Debug.Log("Connected to master");
         PhotonNetwork.AutomaticallySyncScene = true;
     }
-
-    public void JoinLobby(string nickName)
-    {
-        PhotonNetwork.NickName = nickName;
-        print($"Welcome {nickName}");
-        PhotonNetwork.JoinLobby();
-    }
-    public void JoinRoom(string roomName)=>        PhotonNetwork.JoinRoom(roomName);
+    
     public override void OnJoinedLobby()
     {
-        Debug.LogError("Joined Lobby");
+        Debug.Log("Joined Lobby");
     }
-
-    public void CreateRoom(string roomName,RoomOptions options)
-    {
-        PhotonNetwork.CreateRoom(roomName,options);
-    }
-
+    
     public override void OnRoomListUpdate(List<RoomInfo> newRoomList)
     {
         roomList = newRoomList;
@@ -47,14 +36,16 @@ public class NetworkManager : SingletonForPun<NetworkManager>
 
     public override void OnPlayerEnteredRoom(Player newPlayer)
     {
-        MenuManager.Instance.RefreshPlayerList();
+        if (IsMainMenu())
+             MenuManager.Instance.RefreshPlayerList();
         Debug.Log($"OnPlayerEnteredRoom {newPlayer.NickName}");
     }
 
     public override void OnPlayerLeftRoom(Player otherPlayer)
     {
-        MenuManager.Instance.RefreshPlayerList();
-        Debug.LogError($"OnPlayerLeftRoom {otherPlayer.NickName}");
+        if (IsMainMenu())
+            MenuManager.Instance.RefreshPlayerList();
+        Debug.Log($"OnPlayerLeftRoom {otherPlayer.NickName}");
     }
 
     public override void OnCreateRoomFailed(short returnCode, string message)
@@ -64,14 +55,36 @@ public class NetworkManager : SingletonForPun<NetworkManager>
 
     public override void OnJoinedRoom()
     {
-        MenuManager.Instance.RefreshPlayerList();
-        MenuManager.Instance.ChangeVisibilityStartButton(PhotonNetwork.IsMasterClient);
+        if (IsMainMenu())
+        {
+            MenuManager.Instance.RefreshPlayerList();
+            MenuManager.Instance.ChangeVisibilityStartButton(PhotonNetwork.IsMasterClient);
+        }
     }
 
     public override void OnMasterClientSwitched(Player newMasterClient)
     {
         Debug.Log($"OnMasterClientSwitched {newMasterClient.NickName}");
-        MenuManager.Instance.ChangeVisibilityStartButton(PhotonNetwork.IsMasterClient);
+        if(IsMainMenu())
+            MenuManager.Instance.ChangeVisibilityStartButton(PhotonNetwork.IsMasterClient);
+    }
+    
+    #endregion
+
+    #region Custom Methods
+
+    private bool IsMainMenu() => SceneManager.GetActiveScene().buildIndex == 0;
+    public void JoinLobby(string nickName)
+    {
+        PhotonNetwork.NickName = nickName;
+        print($"Welcome {nickName}");
+        PhotonNetwork.JoinLobby();
+    }
+    public void JoinRoom(string roomName)=>        PhotonNetwork.JoinRoom(roomName);
+  
+    public void CreateRoom(string roomName,RoomOptions options)
+    {
+        PhotonNetwork.CreateRoom(roomName,options);
     }
 
     public void LeaveRoom()
@@ -86,4 +99,9 @@ public class NetworkManager : SingletonForPun<NetworkManager>
     {
         SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex+1);
     }
+    public bool IsInRoom => PhotonNetwork.InRoom;
+    public bool IsInLobby => PhotonNetwork.InLobby;
+    public bool IsConnected => PhotonNetwork.IsConnectedAndReady;
+
+    #endregion
 }

@@ -1,22 +1,16 @@
 using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.Linq;
 using Photon.Pun;
-using UnityEditor;
 using UnityEngine;
-using UnityEngine.EventSystems;
-using UnityEngine.Serialization;
 
 public class CharacterManager : MonoBehaviour
 {
-    public SupportType supportType;
-    public Support[] Supports;
-    public Vector3[] SpawnPoints;
-    public SupportController[] supportsController;
+    private SupportType supportType;
+    [SerializeField] private Support[] Supports;
+    private SupportController[] supportsController;
     private int woodCount;
     private PhotonView PV;
-    private Wood selectedWood;
+    private SupportController selectedSupport;
+
     private void Start()
     {
         PV = GetComponent<PhotonView>();
@@ -39,20 +33,21 @@ public class CharacterManager : MonoBehaviour
         float padding = 5f;
         for (int i = 0; i < Supports.Length; i++)
         {
-            var spawnPos = transform.position + (transform.right * (i - 1) * padding) ;
-            supportsController[i] = PhotonNetwork.Instantiate(System.IO.Path.Combine("PhotonPrefabs", Supports[i].name), spawnPos,  Quaternion.identity, 0,new object[] { PV.ViewID}).GetComponent<SupportController>();
+            var spawnPos = transform.position + (transform.right * (i - 1) * padding);
+            supportsController[i] = PhotonNetwork.Instantiate(System.IO.Path.Combine("PhotonPrefabs", Supports[i].name), spawnPos, Quaternion.identity, 0, new object[] {PV.ViewID})
+                .GetComponent<SupportController>();
             supportsController[i].SetController(this);
         }
     }
 
     public void IncreaseWoodCount()
     {
-        woodCount++;  
+        woodCount++;
     }
-   
+
     private void Update()
     {
-        if(!PV.IsMine)return;
+        if (!PV.IsMine) return;
         if (Input.GetMouseButtonDown(0))
         {
             RaycastHit hit;
@@ -64,12 +59,12 @@ public class CharacterManager : MonoBehaviour
                     var pickableObject = hit.transform.GetComponent<IPickable>();
                     if (pickableObject is not null)
                     {
-                        selectedWood = hit.transform.GetComponent<Wood>();
-                        supportsController.FirstOrDefault(x => x.type == supportType).SetTarget(selectedWood.transform.position,selectedWood);
+                        var selectedWood = hit.transform.GetComponent<Wood>();
+                        selectedSupport.SetTarget(selectedWood.transform.position, selectedWood);
                     }
                     else
                     {
-                        supportsController.FirstOrDefault(x => x.type == supportType).SetTarget(hit.point);
+                        selectedSupport.SetTarget(hit.point);
                     }
                 }
                 else
@@ -82,7 +77,7 @@ public class CharacterManager : MonoBehaviour
 
     private void OnGUI()
     {
-        if(!PV.IsMine)return;
+        if (!PV.IsMine) return;
 
         float boxWidth = 100f;
         float boxHeight = 50f;
@@ -96,17 +91,23 @@ public class CharacterManager : MonoBehaviour
         float buttonWidth = 80f;
         float buttonHeight = 30f;
 
-        for (int i = 0; i < 3; i++)
+        for (int i = 0; i < Supports.Length; i++)
         {
             float buttonLeft = leftMargin;
-            float buttonTop = topMargin + boxHeightPadding + i * (buttonHeight + spacing); 
-            var buttonStyle = (SupportType)i + 1 == supportType ? GetCustomButtonPressedStyle(i) : GetCustomButtonStyle(i);
+            float buttonTop = topMargin + boxHeightPadding + i * (buttonHeight + spacing);
+            var buttonStyle = (SupportType) i + 1 == supportType ? GetCustomButtonPressedStyle(i) : GetCustomButtonStyle(i);
             if (GUI.Button(new Rect(buttonLeft, buttonTop, buttonWidth, buttonHeight), $"{Supports[i].supportType}", buttonStyle))
             {
                 if (supportType == (SupportType) i + 1)
+                {
                     supportType = SupportType.None;
+                    selectedSupport = null;
+                }
                 else
+                {
                     supportType = (SupportType) i + 1;
+                    selectedSupport = supportsController[i];
+                }
             }
         }
     }
@@ -154,7 +155,7 @@ public class CharacterManager : MonoBehaviour
         fontSize = 10,
         fontStyle = FontStyle.Bold
     };
-    
+
     private Texture2D ColorToTexture(Color color)
     {
         Texture2D texture = new Texture2D(1, 1);
