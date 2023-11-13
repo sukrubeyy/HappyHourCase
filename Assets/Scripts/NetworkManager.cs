@@ -82,7 +82,7 @@ public class NetworkManager : SingletonForPun<NetworkManager>
     public void LeaveRoom()
     {
         PhotonNetwork.LeaveRoom();
-        //JoinLobby(PhotonNetwork.NickName);
+        JoinLobby(PhotonNetwork.NickName);
     }
 
     public void ChangeVisibilityRoom(bool _isVisible) => PhotonNetwork.CurrentRoom.IsVisible = _isVisible;

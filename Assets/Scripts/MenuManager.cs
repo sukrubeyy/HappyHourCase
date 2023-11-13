@@ -98,6 +98,11 @@ public class MenuManager : Singleton<MenuManager>
         backButtonForFindRoom.onClick.AddListener(() => { OpenMenu(1); });
         backButtonForJoinedRoom.onClick.AddListener(() =>
         {
+            if (!NetworkManager.Instance.IsInRoom)
+            {
+                Debug.LogWarning("You haven't connected to the room yet. PLS WAİT...!!");
+                return;
+            }
             NetworkManager.Instance.LeaveRoom();
             OpenMenu(1);
         });
