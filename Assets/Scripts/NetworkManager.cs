@@ -25,7 +25,7 @@ public class NetworkManager : SingletonForPun<NetworkManager>
     
     public override void OnJoinedLobby()
     {
-        Debug.LogError("Joined Lobby");
+        Debug.Log("Joined Lobby");
     }
     
     public override void OnRoomListUpdate(List<RoomInfo> newRoomList)
@@ -36,14 +36,16 @@ public class NetworkManager : SingletonForPun<NetworkManager>
 
     public override void OnPlayerEnteredRoom(Player newPlayer)
     {
-        MenuManager.Instance.RefreshPlayerList();
+        if (IsMainMenu())
+             MenuManager.Instance.RefreshPlayerList();
         Debug.Log($"OnPlayerEnteredRoom {newPlayer.NickName}");
     }
 
     public override void OnPlayerLeftRoom(Player otherPlayer)
     {
-        MenuManager.Instance.RefreshPlayerList();
-        Debug.LogError($"OnPlayerLeftRoom {otherPlayer.NickName}");
+        if (IsMainMenu())
+            MenuManager.Instance.RefreshPlayerList();
+        Debug.Log($"OnPlayerLeftRoom {otherPlayer.NickName}");
     }
 
     public override void OnCreateRoomFailed(short returnCode, string message)
@@ -53,19 +55,25 @@ public class NetworkManager : SingletonForPun<NetworkManager>
 
     public override void OnJoinedRoom()
     {
-        MenuManager.Instance.RefreshPlayerList();
-        MenuManager.Instance.ChangeVisibilityStartButton(PhotonNetwork.IsMasterClient);
+        if (IsMainMenu())
+        {
+            MenuManager.Instance.RefreshPlayerList();
+            MenuManager.Instance.ChangeVisibilityStartButton(PhotonNetwork.IsMasterClient);
+        }
     }
 
     public override void OnMasterClientSwitched(Player newMasterClient)
     {
         Debug.Log($"OnMasterClientSwitched {newMasterClient.NickName}");
-        MenuManager.Instance.ChangeVisibilityStartButton(PhotonNetwork.IsMasterClient);
+        if(IsMainMenu())
+            MenuManager.Instance.ChangeVisibilityStartButton(PhotonNetwork.IsMasterClient);
     }
-
+    
     #endregion
 
     #region Custom Methods
+
+    private bool IsMainMenu() => SceneManager.GetActiveScene().buildIndex == 0;
     public void JoinLobby(string nickName)
     {
         PhotonNetwork.NickName = nickName;

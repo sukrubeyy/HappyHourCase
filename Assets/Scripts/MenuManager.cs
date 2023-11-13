@@ -2,17 +2,18 @@ using Photon.Pun;
 using Photon.Realtime;
 using TMPro;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 using Button = UnityEngine.UI.Button;
 
 public class MenuManager : Singleton<MenuManager>
 {
-    [Header("Input Fields")] 
-    [SerializeField] private TMP_InputField nickNameInput;
+    [Header("Input Fields")] [SerializeField]
+    private TMP_InputField nickNameInput;
+
     [SerializeField] private TMP_InputField roomNameInput;
     [SerializeField] private TMP_InputField maxPlayerInput;
 
-    [Header("Buttons")] 
-    [SerializeField] private Button loginLobbyButton;
+    [Header("Buttons")] [SerializeField] private Button loginLobbyButton;
     [SerializeField] private Button createRoomMenuButton;
     [SerializeField] private Button createRoomButton;
     [SerializeField] private Button findRoomMenuButton;
@@ -21,22 +22,18 @@ public class MenuManager : Singleton<MenuManager>
     [SerializeField] private Button backButtonForCreateRoom;
     [SerializeField] private Button backButtonForJoinedRoom;
 
-    [Header("Menus")] 
-    [SerializeField] private GameObject loginMenu;
+    [Header("Menus")] [SerializeField] private GameObject loginMenu;
     [SerializeField] private GameObject mainMenu;
     [SerializeField] private GameObject createRoomMenu;
     [SerializeField] private GameObject findRoomMenu;
     [SerializeField] private GameObject joinedRoomMenu;
 
-    [Header("Panels")] 
-    [SerializeField] private Transform menuPanel;
+    [Header("Panels")] [SerializeField] private Transform menuPanel;
 
-    [Header("Prefabs")] 
-    [SerializeField] private GameObject roomListItemPrefab;
+    [Header("Prefabs")] [SerializeField] private GameObject roomListItemPrefab;
     [SerializeField] private GameObject playerListItemPrefab;
 
-    [Header("Content")] 
-    [SerializeField] private Transform roomListContent;
+    [Header("Content")] [SerializeField] private Transform roomListContent;
     [SerializeField] private Transform playerListContent;
 
     private void Start()
@@ -48,6 +45,7 @@ public class MenuManager : Singleton<MenuManager>
                 Debug.LogWarning("PUN2 is not initialize. Pls wait a few seconds....!!");
                 return;
             }
+
             if (!string.IsNullOrEmpty(nickNameInput.text))
             {
                 NetworkManager.Instance.JoinLobby(nickNameInput.text);
@@ -63,7 +61,7 @@ public class MenuManager : Singleton<MenuManager>
                 if (!string.IsNullOrEmpty(maxPlayerInput.text) && int.TryParse(maxPlayerInput.text, out int maxPlayer))
                     roomOptions.MaxPlayers = maxPlayer;
 
-                NetworkManager.Instance.CreateRoom(roomNameInput.text,roomOptions);
+                NetworkManager.Instance.CreateRoom(roomNameInput.text, roomOptions);
                 OpenMenu(4);
             }
         });
@@ -81,6 +79,7 @@ public class MenuManager : Singleton<MenuManager>
                 Debug.LogWarning("You haven't connected to the lobby yet. PLS WAİT...!!");
                 return;
             }
+
             OpenMenu(2);
         });
 
@@ -91,6 +90,7 @@ public class MenuManager : Singleton<MenuManager>
                 Debug.LogWarning("You haven't connected to the lobby yet. PLS WAİT...!!");
                 return;
             }
+
             OpenMenu(3);
         });
 
@@ -103,6 +103,7 @@ public class MenuManager : Singleton<MenuManager>
                 Debug.LogWarning("You haven't connected to the room yet. PLS WAİT...!!");
                 return;
             }
+
             NetworkManager.Instance.LeaveRoom();
             OpenMenu(1);
         });
@@ -117,6 +118,7 @@ public class MenuManager : Singleton<MenuManager>
 
         menuPanel.GetChild(index).gameObject.SetActive(true);
     }
+
     public void RefresRoomList()
     {
         DeleteAllRoomButtonItem();
@@ -125,10 +127,11 @@ public class MenuManager : Singleton<MenuManager>
         {
             if (room.RemovedFromList)
                 continue;
-            
+
             Instantiate(roomListItemPrefab, roomListContent).GetComponent<RoomListItem>().Initialize(room);
         }
     }
+
     private void DeleteAllRoomButtonItem()
     {
         for (int i = 0; i < roomListContent.childCount; i++)
@@ -144,8 +147,7 @@ public class MenuManager : Singleton<MenuManager>
 
     public void RefreshPlayerList()
     {
-       
-DeleteAllPlayerListItem();
+        DeleteAllPlayerListItem();
         foreach (var player in PhotonNetwork.CurrentRoom.Players.Values)
         {
             Instantiate(playerListItemPrefab, playerListContent).GetComponent<PlayerListItem>().Initialize(player.NickName);

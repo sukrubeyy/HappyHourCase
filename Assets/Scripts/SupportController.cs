@@ -58,13 +58,7 @@ public class SupportController : MonoBehaviour
         GetComponent<Renderer>().material.color = newcolor;
     }
 
-    private void DestroySupportObject() => PV.RPC("DestroySupport", RpcTarget.All);
-
-    [PunRPC]
-    private void DestroySupport()
-    {
-        Destroy(gameObject);
-    }
+  
 
     private void OnDrawGizmos()
     {
