@@ -1,17 +1,13 @@
-using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.Linq;
 using Photon.Pun;
 using UnityEngine;
 using Random = UnityEngine.Random;
 
 public class SupportController : MonoBehaviour
 {
-    public Unit _unit;
-    public SupportType type;
+    [SerializeField] private Unit _unit;
+    [SerializeField] private  SupportType type;
     [Range(0, 5)] public float radius;
-    public Color gizmosColor;
+    [SerializeField] private  Color gizmosColor;
     private CharacterManager mainController;
     private Wood targetWood;
     [SerializeField] private PhotonView PV;
@@ -25,35 +21,17 @@ public class SupportController : MonoBehaviour
 
     private void Update()
     {
-        /*if (_unit.reachedEndOfPath)
-        {
-            var colliders = Physics.OverlapSphere(transform.position, radius);
-            foreach (var collider in colliders)
-            {
-                var wood = collider?.GetComponent<IPickable>();
-                if (wood != null)
-                {
-                    Debug.Log($"Bu Woodu Alan {type}");
-                    wood.Pick(mainController);
-                }
-            }
-            _unit.reachedEndOfPath = false;
-        }*/
-
         if (targetWood is not null && Vector3.Distance(targetWood.transform.position, transform.position) <= radius)
         {
             targetWood.GetComponent<IPickable>().Pick(mainController);
             targetWood = null;
         }
     }
-
-
+    
     public void SetTarget(Vector3 targetPos)
     {
         _unit.SetDestination(targetPos);
     }
-
-
 
     public void SetTarget(Vector3 targetPos, Wood wood)
     {
@@ -78,6 +56,14 @@ public class SupportController : MonoBehaviour
     {
         Color newcolor = new Color(r, g, b, a);
         GetComponent<Renderer>().material.color = newcolor;
+    }
+
+    private void DestroySupportObject() => PV.RPC("DestroySupport", RpcTarget.All);
+
+    [PunRPC]
+    private void DestroySupport()
+    {
+        Destroy(gameObject);
     }
 
     private void OnDrawGizmos()

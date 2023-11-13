@@ -4,27 +4,9 @@ using Photon.Pun;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
-public class RoomManager : MonoBehaviourPunCallbacks
+public class RoomManager : SingletonForPun<RoomManager>
 {
-    public static RoomManager Instance;
-    public PhotonView PV;
-
-    void Awake()
-    {
-        if (Instance)
-        {
-            Destroy(gameObject);
-            return;
-        }
-
-        DontDestroyOnLoad(gameObject);
-        Instance = this;
-    }
-
-    private void Start()
-    {
-        PV = GetComponent<PhotonView>();
-    }
+    [SerializeField] private PhotonView PV;
 
     public override void OnEnable()
     {

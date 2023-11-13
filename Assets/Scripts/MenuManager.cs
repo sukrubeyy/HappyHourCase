@@ -1,43 +1,43 @@
-using System;
-using System.Collections;
-using System.Collections.Generic;
 using Photon.Pun;
 using Photon.Realtime;
 using TMPro;
 using UnityEngine;
-using UnityEngine.Serialization;
-using UnityEngine.UIElements;
 using Button = UnityEngine.UI.Button;
 
 public class MenuManager : Singleton<MenuManager>
 {
     [Header("Input Fields")] 
-    public TMP_InputField nickNameInput;
-    public TMP_InputField roomNameInput;
-    public TMP_InputField maxPlayerInput;
+    [SerializeField] private TMP_InputField nickNameInput;
+    [SerializeField] private TMP_InputField roomNameInput;
+    [SerializeField] private TMP_InputField maxPlayerInput;
 
-    [Header("Buttons")] public Button loginLobbyButton;
-    public Button createRoomMenuButton;
-    public Button createRoomButton;
-    public Button findRoomMenuButton;
-    public Button startButton;
-    public Button backButtonForFindRoom;
-    public Button backButtonForCreateRoom;
-    public Button backButtonForJoinedRoom;
+    [Header("Buttons")] 
+    [SerializeField] private Button loginLobbyButton;
+    [SerializeField] private Button createRoomMenuButton;
+    [SerializeField] private Button createRoomButton;
+    [SerializeField] private Button findRoomMenuButton;
+    [SerializeField] private Button startButton;
+    [SerializeField] private Button backButtonForFindRoom;
+    [SerializeField] private Button backButtonForCreateRoom;
+    [SerializeField] private Button backButtonForJoinedRoom;
 
-    [Header("Menus")] public GameObject loginMenu;
-    public GameObject mainMenu;
-    public GameObject createRoomMenu;
-    public GameObject findRoomMenu;
-    public GameObject joinedRoomMenu;
+    [Header("Menus")] 
+    [SerializeField] private GameObject loginMenu;
+    [SerializeField] private GameObject mainMenu;
+    [SerializeField] private GameObject createRoomMenu;
+    [SerializeField] private GameObject findRoomMenu;
+    [SerializeField] private GameObject joinedRoomMenu;
 
-    public Transform menuPanel;
+    [Header("Panels")] 
+    [SerializeField] private Transform menuPanel;
 
-    [Header("Prefabs")] public GameObject roomListItemPrefab;
-    public GameObject playerListItemPrefab;
+    [Header("Prefabs")] 
+    [SerializeField] private GameObject roomListItemPrefab;
+    [SerializeField] private GameObject playerListItemPrefab;
 
-    [Header("Content")] public Transform roomListContent;
-    public Transform playerListContent;
+    [Header("Content")] 
+    [SerializeField] private Transform roomListContent;
+    [SerializeField] private Transform playerListContent;
 
     private void Start()
     {
@@ -93,7 +93,7 @@ public class MenuManager : Singleton<MenuManager>
     }
     public void RefresRoomList()
     {
-        DeleteAllRoomButton();
+        DeleteAllRoomButtonItem();
 
         foreach (var room in NetworkManager.Instance.roomList)
         {
@@ -103,7 +103,7 @@ public class MenuManager : Singleton<MenuManager>
             Instantiate(roomListItemPrefab, roomListContent).GetComponent<RoomListItem>().Initialize(room);
         }
     }
-    private void DeleteAllRoomButton()
+    private void DeleteAllRoomButtonItem()
     {
         for (int i = 0; i < roomListContent.childCount; i++)
         {
@@ -118,14 +118,19 @@ public class MenuManager : Singleton<MenuManager>
 
     public void RefreshPlayerList()
     {
-        for (int i = 0; i < playerListContent.childCount; i++)
-        {
-            Destroy(playerListContent.GetChild(i).gameObject);
-        }
-
+       
+DeleteAllPlayerListItem();
         foreach (var player in PhotonNetwork.CurrentRoom.Players.Values)
         {
             Instantiate(playerListItemPrefab, playerListContent).GetComponent<PlayerListItem>().Initialize(player.NickName);
+        }
+    }
+
+    private void DeleteAllPlayerListItem()
+    {
+        for (int i = 0; i < playerListContent.childCount; i++)
+        {
+            Destroy(playerListContent.GetChild(i).gameObject);
         }
     }
 }
