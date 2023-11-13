@@ -17,15 +17,13 @@ public class RoomListItem : MonoBehaviour
     {
         joinRoomButton.onClick.AddListener(() =>
         {
-             if (roomInfo.PlayerCount != roomInfo.MaxPlayers)
-             {
-                 NetworkManager.Instance.JoinRoom(roomText.text);
-                 MenuManager.Instance.OpenMenu(4);
-             }
-             else
-             {
-                 Debug.LogError("MAX PLAYER SİZE - YOU CAN NOT JOIN THIS ROOM");
-             }
+            if (roomInfo.PlayerCount == roomInfo.MaxPlayers)
+            {
+                Debug.LogError("MAX PLAYER SİZE - YOU CAN NOT JOIN THIS ROOM");
+                return;
+            }
+            NetworkManager.Instance.JoinRoom(roomInfo.Name);
+            MenuManager.Instance.OpenMenu(4);
         });
     }
 

@@ -20,6 +20,7 @@ public class SupportController : MonoBehaviour
     private void Start()
     {
         GetColor = GetComponent<Renderer>().material.color;
+        //mainController = PhotonView.Find((int) PV.InstantiationData[0]).GetComponent<CharacterManager>();
     }
 
     private void Update()
