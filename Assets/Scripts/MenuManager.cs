@@ -43,6 +43,11 @@ public class MenuManager : Singleton<MenuManager>
     {
         loginLobbyButton.onClick.AddListener(() =>
         {
+            if (!NetworkManager.Instance.IsConnected)
+            {
+                Debug.LogWarning("PUN2 is not initialize. Pls wait a few seconds....!!");
+                return;
+            }
             if (!string.IsNullOrEmpty(nickNameInput.text))
             {
                 NetworkManager.Instance.JoinLobby(nickNameInput.text);
@@ -69,9 +74,25 @@ public class MenuManager : Singleton<MenuManager>
             NetworkManager.Instance.ChangeVisibilityRoom(false);
         });
 
-        createRoomMenuButton.onClick.AddListener(() => { OpenMenu(2); });
+        createRoomMenuButton.onClick.AddListener(() =>
+        {
+            if (!NetworkManager.Instance.IsConnected)
+            {
+                Debug.LogWarning("You haven't connected to the lobby yet. PLS WAİT...!!");
+                return;
+            }
+            OpenMenu(2);
+        });
 
-        findRoomMenuButton.onClick.AddListener(() => { OpenMenu(3); });
+        findRoomMenuButton.onClick.AddListener(() =>
+        {
+            if (!NetworkManager.Instance.IsConnected)
+            {
+                Debug.LogWarning("You haven't connected to the lobby yet. PLS WAİT...!!");
+                return;
+            }
+            OpenMenu(3);
+        });
 
         backButtonForCreateRoom.onClick.AddListener(() => { OpenMenu(1); });
         backButtonForFindRoom.onClick.AddListener(() => { OpenMenu(1); });
