@@ -67,6 +67,8 @@ public class NetworkManager : SingletonForPun<NetworkManager>
         Debug.Log($"OnMasterClientSwitched {newMasterClient.NickName}");
         if(IsMainMenu())
             MenuManager.Instance.ChangeVisibilityStartButton(PhotonNetwork.IsMasterClient);
+        else
+            SpawnManager.Instance.SpawnWoods();
     }
     
     #endregion
