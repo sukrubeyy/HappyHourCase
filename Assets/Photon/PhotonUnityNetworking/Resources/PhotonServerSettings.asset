@@ -41,7 +41,6 @@ MonoBehaviour:
   - RespawnSpaceship
   - SetRandomizeColor
   - DestroyWood
-  - DestroySupportControllers
   - DestroySupport
   DisableAutoOpenWizard: 1
   ShowSettings: 0

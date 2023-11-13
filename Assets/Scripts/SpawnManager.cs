@@ -8,7 +8,8 @@ public class SpawnManager : Singleton<SpawnManager>
     [SerializeField] private Transform[] woodPoints;
     private void Start()
     {
-        CreateWoods();
+        if(PhotonNetwork.IsMasterClient)
+            CreateWoods();
     }
 
     private void CreateWoods()
