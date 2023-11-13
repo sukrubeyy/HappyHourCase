@@ -55,6 +55,13 @@ public class MenuManager : Singleton<MenuManager>
 
         createRoomButton.onClick.AddListener(() =>
         {
+            if (!NetworkManager.Instance.IsInLobby)
+            {
+                Debug.LogWarning("You haven't connected to the lobby yet. PLS WAİT...!!");
+                return;
+            }
+
+
             if (!string.IsNullOrEmpty(roomNameInput.text))
             {
                 RoomOptions roomOptions = new RoomOptions();
