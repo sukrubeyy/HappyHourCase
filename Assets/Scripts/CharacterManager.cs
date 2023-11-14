@@ -1,4 +1,6 @@
 using System;
+using System.Collections;
+using System.Threading.Tasks;
 using Photon.Pun;
 using UnityEngine;
 
@@ -10,6 +12,8 @@ public class CharacterManager : MonoBehaviour
     private int woodCount;
     private PhotonView PV;
     private SupportController selectedSupport;
+    [SerializeField] private float cooldownTime = 0.3f;
+    private bool canClick = true;
 
     private void Start()
     {
@@ -48,8 +52,10 @@ public class CharacterManager : MonoBehaviour
     private void Update()
     {
         if (!PV.IsMine) return;
-        if (Input.GetMouseButtonDown(0))
+
+        if (Input.GetMouseButtonDown(0) && canClick)
         {
+            CoolDownTimer();
             RaycastHit hit;
             Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
             if (Physics.Raycast(ray, out hit, Mathf.Infinity))
@@ -73,6 +79,13 @@ public class CharacterManager : MonoBehaviour
                 }
             }
         }
+    }
+
+    async Task CoolDownTimer()
+    {
+        canClick = false;
+        await Task.Delay((int) (cooldownTime * 1000));
+        canClick = true;
     }
 
     private void OnGUI()
